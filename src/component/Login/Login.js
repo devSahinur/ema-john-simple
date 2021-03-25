@@ -1,7 +1,7 @@
 import { useContext, useState } from 'react';
 import { UserContext } from "../../App";
 import { useHistory, useLocation } from "react-router";
-import { handleFbSignIn, handleGoogleSignIn, handleSignOut, initializeLoginFramework } from './LoginManager';
+import { createUserWithEmailAndPassword, handleFbSignIn, handleGoogleSignIn, handleSignOut, initializeLoginFramework, signInWithEmailAndPassword } from './LoginManager';
 
 function Login() {
   const [newUser, setNewUser] = useState(false);
@@ -25,6 +25,7 @@ function Login() {
       .then(res => {
           setUser(res);
           setLoggedInUser(res);
+          history.replace(from);
       })
   };
 
@@ -33,6 +34,7 @@ function Login() {
       .then(res => {
         setUser(res);
         setLoggedInUser(res);
+        history.replace(from);
     })
   };
 
@@ -63,13 +65,21 @@ function Login() {
 
 
   const handleSubmit = (e) => {
-    // console.log(user.email, user.password)
     if (newUser && user.email && user.password) {
-      
+        createUserWithEmailAndPassword(user.name, user.email, user.password)
+        .then(res => {
+            setUser(res);
+            setLoggedInUser(res);
+            history.replace(from);
+        })
     }
-
     if (!newUser && user.email && user.password) {
-      
+        signInWithEmailAndPassword(user.email, user.password)
+        .then(res => {
+            setUser(res);
+            setLoggedInUser(res);
+            history.replace(from);
+        })
     }
 
     e.preventDefault();
